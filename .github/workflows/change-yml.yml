@@ -58,6 +58,15 @@ jobs:
       - name: echo
         run: cat sample.yml
 
-    #   - name: commit
-    #     run: |
-    #       git switch -c fix/change-time-$(date +'%Y%m%d%H%M%S')
+      - name: commit
+        uses: EndBug/add-and-commit@v9
+        with:
+          message: 'change time'
+          add: 'sample.yml'
+
+      - name: create-PR
+        uses: repo-sync/pull-request@v2
+        with:
+          source_branch: fix/hoge_${{ env.CURRENT_DATETIME }}
+          destination_branch: main
+          pr_title: change time
