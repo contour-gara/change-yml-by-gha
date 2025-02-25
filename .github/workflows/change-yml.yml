@@ -12,9 +12,9 @@ on:
         description: end time
         required: false
 
-permissions:
-  pull-requests: write
-  contents: write
+# permissions:
+#   pull-requests: write
+#   contents: write
 
 jobs:
   check-inputs:
