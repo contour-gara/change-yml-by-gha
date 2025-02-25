@@ -1,0 +1,43 @@
+name: change time
+
+on:
+  workflow_dispatch:
+    inputs:
+      start:
+        type: string
+        description: start time
+        required: false
+      end:
+        type: string
+        description: end time
+        required: false
+
+permissions:
+  pull-requests: write
+  contents: write
+
+jobs:
+  check-inputs:
+    if: ${{ github.event.inputs.start == '' && github.event.inputs.end == '' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: check inputs
+        shell: bash
+        run: |
+          echo "No changes"
+
+  change-yml:
+    if: ${{ github.event.inputs.start != '' || github.event.inputs.end != '' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+
+      - name: change
+        id: change
+        uses: mikefarah/yq@master
+        with:
+          cmd: yq -i '.app.start = "${{ github.event.inputs.start }}"' sample.yml
+
+      - name: echo
+        run: cat sample.yml
