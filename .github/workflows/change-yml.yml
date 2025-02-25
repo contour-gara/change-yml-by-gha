@@ -21,7 +21,7 @@ jobs:
     if: ${{ github.event.inputs.start == '' && github.event.inputs.end == '' }}
     runs-on: ubuntu-latest
     steps:
-      - name: check inputs
+      - name: check-inputs
         shell: bash
         run: |
           echo "No changes"
@@ -33,11 +33,31 @@ jobs:
       - name: checkout
         uses: actions/checkout@v4
 
-      - name: change
-        id: change
+      - name: set env
+        env:
+          TZ: 'Asia/Tokyo'
+        run: echo "CURRENT_DATETIME=$(date +'%Y%m%d%H%M%S')" >> $GITHUB_ENV
+
+      - name: create-branch
+        run: |
+          git switch -c fix/change-time-${{ env.CURRENT_DATETIME }}
+          git push -u origin fix/change-time-${{ env.CURRENT_DATETIME }}
+
+      - name: change-start
+        if: ${{ github.event.inputs.start != '' }}
         uses: mikefarah/yq@master
         with:
           cmd: yq -i '.app.start = "${{ github.event.inputs.start }}"' sample.yml
 
+      - name: change-end
+        if: ${{ github.event.inputs.end != '' }}
+        uses: mikefarah/yq@master
+        with:
+          cmd: yq -i '.app.end = "${{ github.event.inputs.end }}"' sample.yml
+
       - name: echo
         run: cat sample.yml
+
+    #   - name: commit
+    #     run: |
+    #       git switch -c fix/change-time-$(date +'%Y%m%d%H%M%S')
