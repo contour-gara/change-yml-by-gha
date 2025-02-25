@@ -14,7 +14,7 @@ on:
 
 permissions:
   contents: write
-  #   pull-requests: write
+  pull-requests: write  # リポジトリの設定も必要だった
 
 jobs:
   check-inputs:
@@ -33,7 +33,7 @@ jobs:
       - name: checkout
         uses: actions/checkout@v4
 
-      - name: set env
+      - name: set-env
         env:
           TZ: 'Asia/Tokyo'
         run: echo "CURRENT_DATETIME=$(date +'%Y%m%d%H%M%S')" >> $GITHUB_ENV
